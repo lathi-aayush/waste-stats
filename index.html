@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>♻️ Waste Management & Recycling Dashboard - India</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-recycle me-2"></i>Waste Management Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#overview" onclick="showSection('overview')">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#awareness" onclick="showSection('awareness')">Awareness Impact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#cost" onclick="showSection('cost')">Cost Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#efficiency" onclick="showSection('efficiency')">Disposal Efficiency</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#landfill" onclick="showSection('landfill')">Landfill Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#geographic" onclick="showSection('geographic')">Geographic View</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#rawdata" onclick="showSection('rawdata')">Raw Data</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <!-- Overview Section -->
+        <section id="overview" class="content-section active">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="text-center my-4">♻️ Waste Management & Recycling Dashboard</h1>
+                    <p class="text-center text-muted mb-4">Comprehensive analysis of waste management practices across Indian cities</p>
+                </div>
+            </div>
+
+            <!-- Key Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-city fa-2x text-primary mb-2"></i>
+                            <h5 class="card-title">Cities Analyzed</h5>
+                            <h3 class="text-primary" id="totalCities">-</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-trash fa-2x text-success mb-2"></i>
+                            <h5 class="card-title">Total Waste (Tons/Day)</h5>
+                            <h3 class="text-success" id="totalWaste">-</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-recycle fa-2x text-info mb-2"></i>
+                            <h5 class="card-title">Avg Recycling Rate</h5>
+                            <h3 class="text-info" id="avgRecycling">-</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-2x text-warning mb-2"></i>
+                            <h5 class="card-title">Avg MES Score</h5>
+                            <h3 class="text-warning" id="avgMES">-</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Performing Cities -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-trophy text-warning me-2"></i>Top Cities by Recycling Rate</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="topRecyclingChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-bar text-info me-2"></i>Waste Type Distribution</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="wasteTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Awareness Campaign Impact Section -->
+        <section id="awareness" class="content-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="my-4">📢 Awareness Campaign Impact Analysis</h2>
+                    <p class="text-muted">Analyzing the relationship between awareness campaigns and recycling rates</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Recycling Rate Bin Width:</label>
+                    <input type="range" class="form-range" id="rateBinWidth" min="1" max="20" value="5">
+                    <span id="rateBinValue">5</span>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Campaign Bin Width:</label>
+                    <input type="range" class="form-range" id="campaignBinWidth" min="1" max="20" value="5">
+                    <span id="campaignBinValue">5</span>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Select Cities:</label>
+                    <select class="form-select" id="awarenessCities" multiple>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <canvas id="awarenessChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cost Analysis Section -->
+        <section id="cost" class="content-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="my-4">💰 Cost vs Recycling Rate Analysis</h2>
+                    <p class="text-muted">Comparing waste management costs across cities and waste types</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Select Waste Types:</label>
+                    <select class="form-select" id="wasteTypes" multiple>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Select Cities:</label>
+                    <select class="form-select" id="costCities" multiple>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Average Cost by City</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="costChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Recycling Rate by Waste Type</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="recyclingByTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Disposal Efficiency Section -->
+        <section id="efficiency" class="content-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="my-4">⚡ Disposal Method Efficiency Analysis</h2>
+                    <p class="text-muted">Comparing effectiveness of different disposal methods across waste types</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Select Waste Types:</label>
+                    <select class="form-select" id="efficiencyWasteTypes" multiple>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Select Disposal Methods:</label>
+                    <select class="form-select" id="disposalMethods" multiple>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <canvas id="efficiencyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Landfill Analysis Section -->
+        <section id="landfill" class="content-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="my-4">🏗️ Landfill Dependency & Population Density</h2>
+                    <p class="text-muted">Analyzing how population density influences landfill usage</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showAllCities" checked>
+                        <label class="form-check-label" for="showAllCities">
+                            Show All Cities
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6" id="citySelection" style="display: none;">
+                    <label class="form-label">Select Cities:</label>
+                    <select class="form-select" id="landfillCities" multiple>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Landfill Capacity vs Population Density</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="landfillScatterChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>City-wise Landfill Usage</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="landfillBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Geographic Overview Section -->
+        <section id="geographic" class="content-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="my-4">🗺️ Geographic Overview</h2>
+                    <p class="text-muted">Interactive map showing waste management data across Indian cities</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Select Year:</label>
+                    <select class="form-select" id="yearSelect">
+                        <option value="2019">2019</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Select Cities:</label>
+                    <select class="form-select" id="mapCities" multiple>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Waste Type:</label>
+                    <select class="form-select" id="mapWasteType">
+                        <option value="All">All Types</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="map" style="height: 500px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Raw Data Section -->
+        <section id="rawdata" class="content-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="my-4">📊 Raw Data Explorer</h2>
+                    <p class="text-muted">Explore and filter the complete dataset</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label class="form-label">Search:</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search data...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">City Filter:</label>
+                    <select class="form-select" id="cityFilter">
+                        <option value="">All Cities</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Waste Type Filter:</label>
+                    <select class="form-select" id="wasteTypeFilter">
+                        <option value="">All Types</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Disposal Method Filter:</label>
+                    <select class="form-select" id="disposalMethodFilter">
+                        <option value="">All Methods</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="dataTable" class="table table-striped table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>City</th>
+                                            <th>Waste Type</th>
+                                            <th>Waste Generated (Tons/Day)</th>
+                                            <th>Recycling Rate (%)</th>
+                                            <th>Population Density</th>
+                                            <th>MES Score</th>
+                                            <th>Disposal Method</th>
+                                            <th>Cost (₹/Ton)</th>
+                                            <th>Awareness Campaigns</th>
+                                            <th>Landfill Capacity (Tons)</th>
+                                            <th>Year</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Data will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="text-center" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
+
